@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace POINT-Online (Google Sheets Integrated)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #0f172a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text: #334155;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding-bottom: 50px;
+        }
+
+        .marquee-container {
+            background-color: var(--secondary);
+            color: #f59e0b;
+            padding: 6px 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-share {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-share span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .social-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .social-btn:hover { transform: scale(1.15); }
+        .bg-wa { background-color: #25D366; }
+        .bg-fb { background-color: #1877F2; }
+        .bg-tw { background-color: #000000; }
+        .bg-tg { background-color: #0088cc; }
+        .bg-li { background-color: #0A66C2; }
+
+        .header-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-cart { background-color: var(--secondary); color: white; }
+        .btn-admin { background-color: #f59e0b; color: white; }
+        .btn-logout { background-color: #ef4444; color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-left: 5px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .info-card { grid-template-columns: 1fr; }
+        }
+
+        .info-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card ol {
+            margin-left: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .bank-details {
+            background-color: #ecfdf5;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px dashed var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .admin-panel {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: none;
+            border: 2px solid #f59e0b;
+        }
+
+        .admin-panel.active { display: block; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 1.5rem 0 1rem 0;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border);
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .categories-filter {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .cat-btn {
+            padding: 0.5rem 1.2rem;
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .cat-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .product-card:hover { transform: translateY(-3px); }
+
+        .product-img-wrapper {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background-color: #f1f5f9;
+            transition: transform 0.3s;
+        }
+
+        .product-img-wrapper:hover .product-img { transform: scale(1.05); }
+
+        .img-hint {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+        }
+
+        .product-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-category {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.3rem 0;
+            color: var(--secondary);
+        }
+
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .qty-selector {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .qty-selector label { font-size: 0.85rem; font-weight: 600; }
+        .qty-input { width: 65px !important; padding: 0.3rem !important; text-align: center; }
+
+        .product-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-add {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem;
+        }
+
+        .btn-delete-item {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.6rem;
+            display: none;
+        }
+
+        body.admin-mode .btn-delete-item { display: block; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .close-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .desc-modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .desc-modal-body { grid-template-columns: 1fr; }
+        }
+
+        .desc-modal-img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+            max-height: 250px;
+        }
+
+        .desc-modal-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+            margin-top: 0.8rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            white-space: pre-line;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 4px;
+        }
+
+        .btn-qty-mini {
+            background: #e2e8f0;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        .customer-inputs {
+            margin-top: 1rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 6px;
+        }
+
+        .btn-wa {
+            background-color: #25D366;
+            color: white;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            font-size: 1rem;
+        }
+
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.7);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <i class="fa-solid fa-spinner fa-spin" style="margin-right: 10px;"></i> Menyinkronkan Data Google Sheets...
+    </div>
+
+    <div class="marquee-container">
+        <marquee behavior="scroll" direction="left" scrollamount="6">
+            ✨ Terima kasih atas kepercayaan anda ✨ Selamat berbelanja di Marketplace POINT-Online ✨
+        </marquee>
+    </div>
+
+    <header>
+        <h1>Marketplace POINT-Online</h1>
+        <div class="header-right">
+            <div class="social-share">
+                <span>Bagikan:</span>
+                <a href="#" class="social-btn bg-wa" onclick="shareToSocial('wa')"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="social-btn bg-fb" onclick="shareToSocial('fb')"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-btn bg-tw" onclick="shareToSocial('tw')"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" class="social-btn bg-tg" onclick="shareToSocial('tg')"><i class="fab fa-telegram-plane"></i></a>
+                <a href="#" class="social-btn bg-li" onclick="shareToSocial('li')"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+
+            <div class="header-btns">
+                <button class="btn btn-admin" id="adminBtn" onclick="handleAdminAccess()">🔒 Login Admin</button>
+                <button class="btn btn-cart" onclick="openCart()">🛒 Keranjang (<span id="cart-count">0</span>)</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <section class="info-card">
+            <div>
+                <h3>📋 Tata Cara Pembelian</h3>
+                <ol>
+                    <li>Klik <b>Gambar Produk</b> untuk membaca deskripsi lengkap produk.</li>
+                    <li>Klik <b>+ Keranjang</b> untuk menambah barang.</li>
+                    <li>Buka menu <b>Keranjang</b> di pojok kanan atas untuk mengecek nota.</li>
+                    <li>Isi Nama & Alamat/Email, lalu klik <b>Kirim Pesanan ke WhatsApp & Google Sheets</b>.</li>
+                </ol>
+            </div>
+            <div>
+                <h3>💳 Informasi Pembayaran / Rekening</h3>
+                <p>Silakan melakukan pembayaran ke nomor rekening resmi berikut:</p>
+                <div class="bank-details">
+                    <p><b>Bank BCA:</b> 123-456-7890</p>
+                    <p><b>Bank Mandiri:</b> 098-765-4321</p>
+                    <p><b>A/N:</b> POINT-Online Store</p>
+                    <small><i>*Konfirmasikan bukti transfer melalui chat WA Admin setelah checkout.</i></small>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-panel" id="adminPanel">
+            <div class="admin-header">
+                <h2>⚙️ Kelola Produk & Pengaturan Admin (Google Sheet Sync)</h2>
+                <button class="btn btn-logout" onclick="logoutAdmin()">Logout Admin</button>
+            </div>
+
+            <div class="admin-section-title">📦 Tambah / Kelola Produk ke Google Sheet</div>
+            <form id="addProductForm" onsubmit="saveProduct(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodName">Nama Produk</label>
+                        <input type="text" id="prodName" required placeholder="Contoh: Modul Informatika Kelas XI">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodCategory">Kategori</label>
+                        <select id="prodCategory" required>
+                            <option value="E-Book">E-Book</option>
+                            <option value="Makanan - Minuman">Makanan - Minuman</option>
+                            <option value="Bahan Pokok">Bahan Pokok</option>
+                            <option value="Barang">Barang</option>
+                            <option value="Hewan">Hewan</option>
+                            <option value="Tanaman">Tanaman</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prodPrice">Harga (Rp)</label>
+                        <input type="number" id="prodPrice" required placeholder="50000">
+                    </div>
+                    <div class="form-group">
+                        <label for="prodImageName">Nama File Gambar / URL Gambar</label>
+                        <input type="text" id="prodImageName" placeholder="Contoh: https://... atau gambar.jpg">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prodDesc">Deskripsi Produk</label>
+                    <textarea id="prodDesc" rows="3" placeholder="Tuliskan spesifikasi/keunggulan produk..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-add" id="btnSaveProd" style="background-color: #059669; margin-top: 0.5rem;">+ Tambah ke Google Sheet</button>
+            </form>
+
+            <div class="admin-section-title">🔐 Pengaturan Akun Admin di Google Sheet</div>
+            <form id="changeCredentialsForm" onsubmit="updateAdminCredentials(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newAdminUser">Username Baru</label>
+                        <input type="text" id="newAdminUser" required placeholder="Masukkan username baru">
+                    </div>
+                    <div class="form-group">
+                        <label for="newAdminPass">Password Baru</label>
+                        <input type="password" id="newAdminPass" required placeholder="Masukkan password baru">
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="background-color: #f59e0b; color: white;">💾 Simpan ke Google Sheet</button>
+            </form>
+        </section>
+
+        <div class="categories-filter">
+            <button class="cat-btn active" onclick="filterCategory('Semua')">Semua Produk</button>
+            <button class="cat-btn" onclick="filterCategory('E-Book')">📚 E-Book</button>
+            <button class="cat-btn" onclick="filterCategory('Makanan - Minuman')">Makanan - Minuman</button>
+            <button class="cat-btn" onclick="filterCategory('Bahan Pokok')">Bahan Pokok</button>
+            <button class="cat-btn" onclick="filterCategory('Barang')">Barang</button>
+            <button class="cat-btn" onclick="filterCategory('Hewan')">Hewan</button>
+            <button class="cat-btn" onclick="filterCategory('Tanaman')">Tanaman</button>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <h2>🔑 Login Admin</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form onsubmit="submitLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUser" required placeholder="Masukkan username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" required placeholder="Masukkan password">
+                </div>
+                <button type="submit" class="btn btn-add" style="background-color: #f59e0b; width:100%;">Masuk Admin Panel</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🛒 Nota Pesanan Anda</h2>
+                <button class="close-btn" onclick="closeModal('cartModal')">&times;</button>
+            </div>
+            
+            <div id="cartItemsContainer"></div>
+            <div class="cart-total" id="cartTotalText">Total: Rp 0</div>
+
+            <div class="customer-inputs">
+                <h4>Data Pemesan:</h4>
+                <div class="form-group" style="margin-top: 0.5rem;">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="custName" placeholder="Contoh: Budi Santoso">
+                </div>
+                <div class="form-group">
+                    <label>Alamat Lengkap / Catatan (Sertakan Email jika beli E-Book)</label>
+                    <input type="text" id="custAddress" placeholder="Contoh: Jl. Merdeka No. 12, Jakarta / email: budi@gmail.com">
+                </div>
+            </div>
+
+            <button class="btn btn-wa" id="btnSubmitOrder" onclick="processOrderAndWhatsApp()">💬 Kirim Pesanan ke WhatsApp & Google Sheets</button>
+        </div>
+    </div>
+
+    <div class="modal" id="descModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="descTitle">Detail Produk</h2>
+                <button class="close-btn" onclick="closeModal('descModal')">&times;</button>
+            </div>
+            <div class="desc-modal-body">
+                <div>
+                    <img id="descImg" src="" alt="" class="desc-modal-img">
+                    <div style="margin-top: 10px;">
+                        <span id="descCat" class="product-category"></span>
+                        <div id="descPrice" class="product-price" style="margin-top: 5px;"></div>
+                        <div id="descRating" class="rating-stars"></div>
+                    </div>
+                </div>
+                <div>
+                    <h4>Deskripsi Produk:</h4>
+                    <div id="descText" class="desc-modal-text"></div>
+                    <button class="btn btn-add" style="margin-top: 1.5rem;" onclick="addToCartFromDesc()">+ Tambah ke Keranjang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 POINT-Online Store. Terintegrasi dengan Google Sheets.</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 🔴 TEMPELKAN URL APPS SCRIPT ANDA DI SINI
+        // ==========================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz72ZoxESgwluWt1QeB1lEKJWnPT8CAMF4Dk3Cq3YnIhtumnEDf8I5ATdnBL4F2Orvp/exec";
+        const ADMIN_WA_NUMBER = "6281234567890";
+
+        let isAdminLoggedIn = false;
+        let selectedProductForDesc = null;
+        let adminCredentials = { user: "admin", pass: "admin123" };
+        let products = [];
+        let cart = [];
+        let currentCategory = "Semua";
+
+        function showLoading(show) {
+            document.getElementById("loadingOverlay").style.display = show ? "flex" : "none";
+        }
+
+        // 1. Ambil data produk & akun admin langsung dari Google Sheet saat aplikasi dibuka
+        async function fetchGoogleSheetsData() {
+            showLoading(true);
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getInitialData`);
+                const res = await response.json();
+                if (res.status === "success") {
+                    products = res.products;
+                    adminCredentials = res.admin;
+                }
+            } catch (err) {
+                console.warn("Menggunakan fallback cache lokal:", err);
+                const stored = localStorage.getItem("point_online_products");
+                if (stored) products = JSON.parse(stored);
+            } finally {
+                showLoading(false);
+                renderProducts();
+            }
+        }
+
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        function shareToSocial(platform) {
+            const currentUrl = encodeURIComponent(window.location.href);
+            const shareText = encodeURIComponent("Yuk belanja di Marketplace POINT-Online!");
+            let targetUrl = "";
+            switch(platform) {
+                case 'wa': targetUrl = `https://wa.me/?text=${shareText}%20${currentUrl}`; break;
+                case 'fb': targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`; break;
+                case 'tw': targetUrl = `https://twitter.com/intent/tweet?url=${currentUrl}&text=${shareText}`; break;
+                case 'tg': targetUrl = `https://t.me/share/url?url=${currentUrl}&text=${shareText}`; break;
+                case 'li': targetUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${currentUrl}`; break;
+            }
+            window.open(targetUrl, '_blank');
+        }
+
+        function handleAdminAccess() {
+            if (isAdminLoggedIn) {
+                document.getElementById("adminPanel").classList.toggle("active");
+            } else {
+                document.getElementById("loginModal").classList.add("active");
+            }
+        }
+
+        function submitLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById("loginUser").value;
+            const p = document.getElementById("loginPass").value;
+
+            if (u === adminCredentials.user && p === adminCredentials.pass) {
+                isAdminLoggedIn = true;
+                document.body.classList.add("admin-mode");
+                closeModal("loginModal");
+                document.getElementById("adminPanel").classList.add("active");
+                document.getElementById("adminBtn").innerText = "⚙️ Admin Active";
+                document.getElementById("newAdminUser").value = adminCredentials.user;
+                document.getElementById("newAdminPass").value = adminCredentials.pass;
+                alert("Login Admin Berhasil!");
+                renderProducts();
+            } else {
+                alert("Username atau Password Salah!");
+            }
+        }
+
+        // 2. Simpan kredensial baru ke Google Sheet
+        async function updateAdminCredentials(e) {
+            e.preventDefault();
+            const newUser = document.getElementById("newAdminUser").value.trim();
+            const newPass = document.getElementById("newAdminPass").value.trim();
+
+            if (!newUser || !newPass) {
+                alert("Username dan Password tidak boleh kosong.");
+                return;
+            }
+
+            showLoading(true);
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "updateAdmin", user: newUser, pass: newPass })
+                });
+                adminCredentials = { user: newUser, pass: newPass };
+                alert("✅ Akun Admin berhasil diperbarui di Google Sheet!");
+            } catch (err) {
+                alert("Gagal memperbarui ke Google Sheet: " + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.body.classList.remove("admin-mode");
+            document.getElementById("adminPanel").classList.remove("active");
+            document.getElementById("adminBtn").innerText = "🔒 Login Admin";
+            alert("Anda telah logout.");
+            renderProducts();
+        }
+
+        // 3. Tambah produk baru langsung ke Google Sheet
+        async function saveProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('prodName').value;
+            const category = document.getElementById('prodCategory').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const desc = document.getElementById('prodDesc').value;
+            let imageName = document.getElementById('prodImageName').value.trim();
+
+            if (!imageName) {
+                imageName = "https://via.placeholder.com/300x200?text=POINT-Online";
+            }
+
+            const newProduct = { 
+                id: Date.now(), 
+                name: name, 
+                category: category, 
+                price: price, 
+                desc: desc, 
+                rating: 4, 
+                image: imageName 
+            };
+
+            showLoading(true);
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "addProduct", product: newProduct })
+                });
+                products.push(newProduct);
+                renderProducts();
+                document.getElementById('addProductForm').reset();
+                alert("✅ Produk baru berhasil ditambahkan ke Google Sheet!");
+            } catch (err) {
+                alert("Gagal menambahkan ke Google Sheet: " + err.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 4. Hapus produk dari Google Sheet
+        async function deleteProduct(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus produk ini dari Google Sheet?")) {
+                showLoading(true);
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action: "deleteProduct", id: id })
+                    });
+                    products = products.filter(p => p.id !== id);
+                    cart = cart.filter(c => c.id !== id);
+                    updateCartBadge();
+                    renderProducts();
+                    alert("✅ Produk berhasil dihapus dari Google Sheet!");
+                } catch (err) {
+                    alert("Gagal menghapus produk: " + err.message);
+                } finally {
+                    showLoading(false);
+                }
+            }
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.includes(cat) || (cat === 'Semua' && btn.innerText.includes('Semua')));
+            });
+            renderProducts();
+        }
+
+        function generateStarsHtml(currentRating = 4) {
+            let html = "";
+            for (let i = 1; i <= 4; i++) {
+                html += (i <= currentRating) 
+                    ? `<i class="fa-solid fa-star"></i>` 
+                    : `<i class="fa-regular fa-star"></i>`;
+            }
+            html += `<span class="rating-text">(${currentRating}/4)</span>`;
+            return html;
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = "";
+
+            const filtered = currentCategory === "Semua" 
+                ? products 
+                : products.filter(p => p.category === currentCategory);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 2rem;">Tidak ada produk.</p>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const cartItem = cart.find(item => item.id === p.id);
+                const currentQtyInCart = cartItem ? cartItem.qty : 0;
+                const starRating = p.rating || 4;
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-img-wrapper" onclick="openDescModal(${p.id})">
+                        <img src="${p.image}" alt="${p.name}" class="product-img" onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=Gambar+Tidak+Ada';">
+                        <span class="img-hint"><i class="fa-solid fa-eye"></i> Detail</span>
+                    </div>
+                    <div class="product-info">
+                        <span class="product-category">${p.category}</span>
+                        <div class="product-title" style="cursor:pointer;" onclick="openDescModal(${p.id})">${p.name}</div>
+                        <div class="rating-stars">${generateStarsHtml(starRating)}</div>
+                        <div class="product-price">${formatRupiah(p.price)}</div>
+                        <div class="qty-selector">
+                            <label>Jumlah Beli:</label>
+                            <input type="number" id="qty-${p.id}" value="${currentQtyInCart}" min="0" class="qty-input" onchange="handleManualQtyChange(${p.id}, this.value)">
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-add" onclick="addToCart(${p.id})">+ Keranjang</button>
+                            <button class="btn btn-delete-item" onclick="deleteProduct(${p.id})" title="Hapus Produk">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openDescModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            selectedProductForDesc = product;
+            document.getElementById('descTitle').innerText = product.name;
+            document.getElementById('descImg').src = product.image;
+            document.getElementById('descCat').innerText = product.category;
+            document.getElementById('descPrice').innerText = formatRupiah(product.price);
+            document.getElementById('descRating').innerHTML = generateStarsHtml(product.rating || 4);
+            document.getElementById('descText').innerText = product.desc || "Tidak ada deskripsi rinci.";
+            document.getElementById('descModal').classList.add('active');
+        }
+
+        function addToCartFromDesc() {
+            if (selectedProductForDesc) {
+                addToCart(selectedProductForDesc.id);
+                closeModal('descModal');
+            }
+        }
+
+        function handleManualQtyChange(productId, val) {
+            let newQty = parseInt(val);
+            const product = products.find(p => p.id === productId);
+            const cartItem = cart.find(item => item.id === productId);
+
+            if (isNaN(newQty) || newQty <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            } else {
+                if (cartItem) cartItem.qty = newQty;
+                else cart.push({ ...product, qty: newQty });
+            }
+            updateCartBadge();
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const qtyInput = document.getElementById(`qty-${productId}`);
+            let inputVal = qtyInput ? (parseInt(qtyInput.value) || 0) : 0;
+            const cartItem = cart.find(item => item.id === productId);
+
+            if (cartItem) {
+                cartItem.qty = (inputVal === cartItem.qty) ? cartItem.qty + 1 : (inputVal <= 0 ? 1 : inputVal);
+                if (qtyInput) qtyInput.value = cartItem.qty;
+            } else {
+                let addQty = inputVal > 0 ? inputVal : 1;
+                cart.push({ ...product, qty: addQty });
+                if (qtyInput) qtyInput.value = addQty;
+            }
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-count').innerText = totalQty;
+        }
+
+        function openCart() {
+            renderCartItems();
+            document.getElementById('cartModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function changeCartQty(id, change) {
+            const item = cart.find(p => p.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) cart = cart.filter(p => p.id !== id);
+            }
+            updateCartBadge();
+            renderCartItems();
+            renderProducts();
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = "";
+
+            if (cart.length === 0) {
+                container.innerHTML = "<p style='text-align:center; padding: 1rem;'>Keranjang belanja masih kosong.</p>";
+                document.getElementById('cartTotalText').innerText = "Total: Rp 0";
+                return;
+            }
+
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                total += itemTotal;
+
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${formatRupiah(item.price)} per unit</small>
+                        <div class="cart-item-qty">
+                            <span>Jumlah: </span>
+                            <button class="btn-qty-mini" onclick="changeCartQty(${item.id}, -1)">-</button>
+                            <span style="font-weight:bold; padding:0 5px;">${item.qty}</span>
+                            <button class="btn-qty-mini" onclick="changeCartQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-weight: 600; display:block;">${formatRupiah(itemTotal)}</span>
+                        <button class="btn" style="background:#ef4444; color:white; padding: 2px 6px; font-size:0.75rem; margin-top:5px;" onclick="removeFromCart(${item.id})">Hapus</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('cartTotalText').innerText = "Total: " + formatRupiah(total);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartBadge();
+            renderCartItems();
+            renderProducts();
+        }
+
+        // 5. Simpan Pesanan ke Google Sheet & otomatis membuka WhatsApp
+        async function processOrderAndWhatsApp() {
+            if (cart.length === 0) {
+                alert("Keranjang belanja Anda masih kosong.");
+                return;
+            }
+
+            const name = document.getElementById('custName').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+
+            if (!name || !address) {
+                alert("Silakan lengkapi Nama dan Alamat/Email terlebih dahulu.");
+                return;
+            }
+
+            let total = 0;
+            let itemsSummary = [];
+            let waMessage = `*NOTA PESANAN - POINT-ONLINE*\n`;
+            waMessage += `-----------------------------------\n`;
+            waMessage += `*Nama Pemesan:* ${name}\n`;
+            waMessage += `*Alamat/Email:* ${address}\n`;
+            waMessage += `-----------------------------------\n`;
+            waMessage += `*Rincian Barang Dipilih:*\n`;
+
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                itemsSummary.push(`${item.name} (${item.qty}x)`);
+                waMessage += `${index + 1}. ${item.name}\n   └ Jumlah: ${item.qty} unit x ${formatRupiah(item.price)} = ${formatRupiah(subtotal)}\n`;
+            });
+
+            waMessage += `-----------------------------------\n`;
+            waMessage += `*TOTAL PEMBAYARAN:* ${formatRupiah(total)}\n\n`;
+            waMessage += `Mohon info konfirmasi pembayaran dan pengiriman file/produk. Terima kasih!`;
+
+            showLoading(true);
+
+            // Kirim ke Google Sheet
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "saveOrder",
+                        name: name,
+                        address: address,
+                        items: itemsSummary.join(", "),
+                        total: total
+                    })
+                });
+            } catch (err) {
+                console.error("Gagal mencatat pesanan ke Google Sheets:", err);
+            } finally {
+                showLoading(false);
+            }
+
+            // Buka WhatsApp
+            const encodedMessage = encodeURIComponent(waMessage);
+            window.open(`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodedMessage}`, '_blank');
+        }
+
+        // Ambil data pertama kali saat web dibuka
+        fetchGoogleSheetsData();
+    </script>
+</body>
+</html>
